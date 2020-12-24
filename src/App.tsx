@@ -1,48 +1,39 @@
-import React, { useEffect } from 'react'
-import { Link, Route, Switch } from 'react-router-dom'
+import React from 'react'
+import { Route, Switch } from 'react-router-dom'
 
-import { ThemeProvider } from 'styled-components'
-import { theme } from 'styles/theme'
+import Home from './pages/Home'
+import SignIn from './pages/MemberConfirmPage'
+import MemberInsert from './pages/MemberInsertPage'
+import MemberUpdate from './pages/MemberUpdatePage'
+import MemberDetail from './pages/MemberDetailPage'
+import Denied from './pages/403'
+import NotFound from './pages/404'
 
-import Home from './pages/main/Home'
-import SignIn from './pages/session/SignInPage'
-import MemberInsert from './pages/member/MemberInsertPage'
-import MemberUpdate from './pages/member/MemberUpdatePage'
-import MemberDetail from './pages/member/MemberDetailPage'
-import Denied from './pages/error/403'
-import NotFound from './pages/error/404'
-
-import { useLogout, useSession } from './hooks/sessionHooks'
-import Ul from './components/templates/molecules/Ul'
-import { Maybe } from './components/functions/Maybe'
-import ReLink from 'components/templates/atoms/ReLink'
-import { GlobalStyle } from 'styles/global-style'
+import { useSession } from './hooks/useSession'
+import Footer from 'components/templates/organisms/Footer'
+import Header from 'components/templates/organisms/Header'
+import NavBar from 'components/templates/organisms/NavBar'
+import UserBar from 'components/templates/organisms/UserBar'
 
 const navList = [{ to: '/', linkName: 'home' }]
 
 const App: React.FC = () => {
-  const { isLogin, data } = useSession()
-  const { logoutAction } = useLogout()
-
-  useEffect(() => {}, [])
+  const {
+    session: { isLogin, data },
+    logoutAction,
+  } = useSession()
 
   return (
     <>
-      <ThemeProvider theme={theme.light}>
-        <GlobalStyle />
-        <header>
-          <Maybe isLogin={!isLogin}>
-            <ReLink to={'/signIn'}>로그인</ReLink>
-            <ReLink to={'/member/insert'}>회원가입</ReLink>
-          </Maybe>
-          <Maybe isLogin={isLogin}>
-            <Link to={'/member/detail'}>{data?.username}</Link>
-            <button onClick={logoutAction}>로그아웃</button>
-          </Maybe>
-        </header>
-        <nav>
-          <Ul list={navList} />
-        </nav>
+      <Header>
+        <UserBar
+          isLogin={isLogin}
+          username={data?.username}
+          sessionOut={logoutAction}
+        />
+        <NavBar navList={navList} />
+      </Header>
+      <main>
         <Switch>
           <Route path="/" exact={true} component={Home} />
           <Route path="/signIn" component={SignIn} />
@@ -52,8 +43,8 @@ const App: React.FC = () => {
           <Route path="/error/403" component={Denied} />
           <Route component={NotFound} />
         </Switch>
-        <footer>footer</footer>
-      </ThemeProvider>
+      </main>
+      <Footer />
     </>
   )
 }

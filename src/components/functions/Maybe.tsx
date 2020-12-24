@@ -1,5 +1,11 @@
-import React from "react";
+import React from 'react'
 
-export function Maybe(props: { isLogin: boolean; children: any }) {
-  return <>{props.isLogin ? props.children : null}</>;
+export function Maybe({
+  isLogin,
+  children,
+}: {
+  isLogin: boolean
+  children: any
+}) {
+  return <>{isLogin ? children : null}</>
 }
