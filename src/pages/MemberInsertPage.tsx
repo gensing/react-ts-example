@@ -1,53 +1,22 @@
 import React from 'react'
-import { useForm } from 'react-hook-form'
-import { useApi } from 'hooks/useApi'
-import { postApi } from 'modules/member/api'
-import { IMemberForm } from 'modules/member/types'
-import ReDiv from 'components/templates/atoms/StyledDiv'
-import ReButton from 'components/templates/atoms/StyledButton'
-import TextField from 'components/templates/molecules/TextField'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { IPasswordConfirm } from 'types/IPasswordConfirm'
-import { memberSchema } from 'utils/yup'
+import { useHistory } from 'react-router-dom'
+import { useMember } from 'modules/member/hook'
+import MemberForm from 'components/templates/organisms/forms/MemberForm'
+import Layout from './Layout'
 
 export default () => {
-  const { state, fetchData } = useApi<IMemberForm, void>(postApi)
+  const { member, insertMember } = useMember()
+  let history = useHistory()
 
-  const { register, handleSubmit, errors } = useForm<
-    IMemberForm & IPasswordConfirm
-  >({
-    resolver: yupResolver(memberSchema),
-  })
+  React.useEffect(() => {
+    if (member.insert.state === 'success') {
+      history.push('/')
+    }
+  }, [history, member.insert.state])
 
   return (
-    <ReDiv>
-      <form onSubmit={handleSubmit(fetchData)}>
-        <TextField
-          type="text"
-          name="name"
-          helperText={errors.name?.message}
-          inputRef={register}
-        />
-        <TextField
-          type="text"
-          name="email"
-          helperText={errors.email?.message}
-          inputRef={register}
-        />
-        <TextField
-          type="password"
-          name="password"
-          helperText={errors.password?.message}
-          inputRef={register}
-        />
-        <TextField
-          type="password"
-          name="passwordConfirm"
-          helperText={errors.passwordConfirm?.message}
-          inputRef={register}
-        />
-        <ReButton type="submit">회원가입</ReButton>
-      </form>
-    </ReDiv>
+    <Layout>
+      <MemberForm onSubmit={insertMember} />
+    </Layout>
   )
 }

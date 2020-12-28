@@ -1,11 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import styled from 'styled-components'
 import ReInput from '../atoms/StyledInput'
 
-const Label = styled.label`
-  display: block;
-`
 function TextField(props: {
   type: string
   name: string

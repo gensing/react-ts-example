@@ -1,19 +1,18 @@
-import { AxiosResponse } from 'axios';
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { actions } from './actions';
+import { AxiosResponse } from 'axios';
 import { loginApi } from './api';
-import { LOGIN_REQUEST } from './constants';
-import { ILogin, ILoginRequestAction } from './types';
+import * as Duck from './duck';
+import { ILogin } from 'types/data/Session';
 
-function* loginAsyncWorker(action: ILoginRequestAction) {
+function* loginAsyncWorker(action: Duck.ILoginRequestAction) {
     try {
         const { data }: AxiosResponse<ILogin> = yield call(loginApi, action.payload)
-        yield put(actions.loginSuccess(data))
+        yield put<Duck.ILoginSuccessAction>({ type: 'LOGIN_SUCCESS', payload: data })
     } catch (error) {
-        yield put(actions.loginFailure())
+        yield put<Duck.ILoginFaiureAction>({ type: 'LOGIN_FAILURE' })
     }
 }
 
 export function* watcher() {
-    yield takeEvery(LOGIN_REQUEST, loginAsyncWorker)
+    yield takeEvery<Duck.ILoginRequestAction>(Duck.LOGIN_REQUEST, loginAsyncWorker)
 }

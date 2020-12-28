@@ -1,45 +1,26 @@
-import React, { useCallback, useEffect } from 'react'
-import { Redirect } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { useSession } from 'hooks/useSession'
-import { Maybe } from 'components/functions/Maybe'
-import ReButton from 'components/templates/atoms/StyledButton'
-import { deletApi, getApi } from 'modules/member/api'
-import { IRootState } from 'modules'
-import { actions } from 'modules/session/actions'
-import { getMemberAction, getMemberSuccessAction } from 'modules/member/actions'
-import ReLink from 'components/templates/atoms/StyledLink'
+import React from 'react'
+import { useParams } from 'react-router-dom'
+import { useMember } from 'modules/member/hook'
+import { useSession } from 'modules/session/hook'
+import MemberDetail from 'components/templates/organisms/detail/MemberDetail'
+import Layout from './Layout'
 
-export default (): JSX.Element => {
-  const {
-    session: { isLogin, data },
-  } = useSession()
+export default () => {
+  let { id } = useParams<{ id: string }>()
+  const { session } = useSession()
+  const { member, getMember, deleteMember } = useMember()
 
-  if (data === null) return <Redirect to="/error/403" />
-
-  const dispatch = useDispatch()
-  const member = useSelector((store: IRootState) => store.member)
-
-  const onClick = useCallback(() => {
-    deletApi(data.id)
-      .then(() => dispatch(actions.logout))
-      .catch(() => {})
-  }, [])
-
-  useEffect(() => {
-    getApi(data.id).then((resp) => {
-      dispatch(getMemberSuccessAction(resp.data))
-    })
-  }, [])
+  React.useEffect(() => {
+    getMember(+id)
+  }, [id, getMember])
 
   return (
-    <div>
-      <Maybe isLogin={isLogin}>
-        <ReLink to="/member/update">update</ReLink>
-        <ReButton type="button" onClick={onClick}>
-          delete
-        </ReButton>
-      </Maybe>
-    </div>
+    <Layout>
+      <MemberDetail
+        deleteFun={() => deleteMember}
+        isLogin={session.isLogin}
+        member={member.detail.data}
+      />
+    </Layout>
   )
 }

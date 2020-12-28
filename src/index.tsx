@@ -2,23 +2,20 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
-import { ThemeProvider } from 'styled-components'
-import { GlobalStyle } from 'components/styles/global-style'
-import { theme } from 'components/styles/theme'
+import { StyleProvider } from 'components/styles/StyleProvider'
 import store from 'modules'
 
 import App from 'App'
 import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
-  <ThemeProvider theme={theme.light}>
-    <GlobalStyle />
+  <StyleProvider>
     <Provider store={store}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </Provider>
-  </ThemeProvider>,
+  </StyleProvider>,
   document.getElementById('root')
 )
 

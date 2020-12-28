@@ -1,6 +1,6 @@
-import axios from "../../utils/axios";
-import { ILoginForm, ILogin } from "./types";
+import { ILogin, ILoginForm } from "types/data/Session";
+import http from "utils/http";
 
 export function loginApi(data: ILoginForm) {
-    return axios.post<ILogin>("/login", JSON.stringify(data));
+    return http.post<ILogin>("/login", data);
 }
